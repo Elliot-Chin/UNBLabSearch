@@ -39,9 +39,11 @@ public class Software {
 
 	public String toFileFormat() {
 		String toReturn = "";
-		toReturn += name + ",";
+		toReturn += name;
+		if (labList.size() > 0)
+			toReturn += ",";
 		for (int i = 0; i < labList.size(); i++) {
-			toReturn += labList.get(i);
+			toReturn += labList.get(i).getName();
 			if (i < labList.size() - 1)
 				toReturn += ",";
 		}
