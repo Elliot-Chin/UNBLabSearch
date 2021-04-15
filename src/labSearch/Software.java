@@ -40,11 +40,12 @@ public class Software {
 	public String toFileFormat() {
 		String toReturn = "";
 		toReturn += name + ",";
-		for (Lab l : labList) {
-			toReturn += l.getName() + ",";
+		for (int i = 0; i < labList.size(); i++) {
+			toReturn += labList.get(i);
+			if (i < labList.size() - 1)
+				toReturn += ",";
 		}
 		toReturn += System.lineSeparator();
-
 		return toReturn;
 	}
 }
