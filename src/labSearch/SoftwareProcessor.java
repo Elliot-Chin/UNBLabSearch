@@ -1,7 +1,9 @@
 package labSearch;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SoftwareProcessor {
 
@@ -11,7 +13,7 @@ public class SoftwareProcessor {
 		this.swList = swList;
 	}
 
-	public List<Lab> searchLab(String SoftwareName) {
+	private List<Lab> searchLab(String SoftwareName) {
 		for (Software sw : swList) {
 			if (sw.getName().equalsIgnoreCase(SoftwareName)) {
 				return sw.getLabList();
@@ -20,7 +22,7 @@ public class SoftwareProcessor {
 		return null;
 	}
 
-	public List<Software> searchSoftware(String labName) {
+	private List<Software> searchSoftware(String labName) {
 		List<Software> toReturn = new ArrayList<>();
 		for (Software s : swList) {
 			for (Lab l : s.getLabList()) {
@@ -29,5 +31,18 @@ public class SoftwareProcessor {
 			}
 		}
 		return toReturn;
+	}
+
+	public List<?> search(String query) {
+		List<?> searchResults;
+		searchResults = searchLab(query);
+		if (searchResults == null) {
+			try {
+				searchResults = searchSoftware(query);
+			} catch (NullPointerException e2) {
+				return null;
+			}
+		}
+		return searchResults;
 	}
 }
