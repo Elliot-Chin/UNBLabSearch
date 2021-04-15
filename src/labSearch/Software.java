@@ -48,4 +48,9 @@ public class Software {
 		toReturn += System.lineSeparator();
 		return toReturn;
 	}
+
+	public String toString() {
+		String toReturn = "";
+		return toReturn;
+	}
 }
