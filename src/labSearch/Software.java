@@ -26,7 +26,7 @@ public class Software {
 	}
 
 	public List<Lab> getLabList() {
-		return getLabList();
+		return labList;
 	}
 
 	public void removeLab(String labName) {
