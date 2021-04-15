@@ -32,6 +32,7 @@ public class FileDealer {
 			for (int i = 1; i < temp.length; i++) {
 				toReturn.get(index).addLab(new Lab(temp[i]));
 			}
+			index++;
 		}
 		br.close();
 		return toReturn;
