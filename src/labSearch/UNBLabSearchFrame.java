@@ -1,31 +1,39 @@
 package labSearch;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JTextArea;
-import javax.swing.JLabel;
-import java.awt.Font;
-import javax.swing.SwingConstants;
-import java.awt.Cursor;
-import javax.swing.JPanel;
-import javax.swing.border.TitledBorder;
-
-import myUtilities.MyUtilities;
-
-import javax.swing.border.EtchedBorder;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Desktop;
+import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.SystemColor;
-import javax.swing.JTextField;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.awt.event.ActionEvent;
-import javax.swing.JScrollPane;
+
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.MatteBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
+
+import myUtilities.MyUtilities;
 
 public class UNBLabSearchFrame {
 
@@ -94,6 +102,33 @@ public class UNBLabSearchFrame {
 		searchResultsTA.setBorder(null);
 
 		warningLBL = new JLabel("");
+		warningLBL.addMouseListener(new MouseAdapter() {
+			int clickCount = 0;
+
+			public void mouseClicked(MouseEvent e) {
+				if (e.getButton() == MouseEvent.BUTTON3) {
+					clickCount++;
+				}
+				if (clickCount == 3) {
+					clickCount = 0;
+					String command = showInputDialogBox("Enter Command", "Enter Command");
+					switch (command) {
+					case "openFile":
+						try {
+							Desktop.getDesktop().open(new File(FileDealer.LAB_FILE));
+							return;
+						} catch (IOException e1) {
+							warning("You should not be seeing this message, something is really wrong (can't find file)",
+									1);
+							return;
+						}
+					default:
+						warning("Do not do this again!", 1);
+						return;
+					}
+				}
+			}
+		});
 		warningLBL.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		warningLBL.setHorizontalAlignment(SwingConstants.CENTER);
 		warningLBL.setFont(new Font("Consolas", Font.PLAIN, 12));
@@ -131,6 +166,7 @@ public class UNBLabSearchFrame {
 		searchTF.setColumns(10);
 
 		JButton btnNewButton = new JButton("Clear");
+		btnNewButton.setToolTipText("Clear search bar and search results");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				searchTF.setText("");
@@ -191,6 +227,41 @@ public class UNBLabSearchFrame {
 			}
 			warningLBL.setText("");
 		}).start();
+	}
+
+	private String showInputDialogBox(String borderTitle, String dialogBoxTitle) {
+		JPanel panel = new JPanel();
+		panel.setLayout(new BorderLayout());
+		panel.setBorder(new TitledBorder(
+				new EtchedBorder(EtchedBorder.LOWERED, new Color(153, 180, 209), new Color(244, 247, 252)), borderTitle,
+				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		JTextField tf = new JTextField();
+		tf.setBackground(SystemColor.control);
+		tf.setFont(new Font("Consolas", Font.PLAIN, 12));
+		tf.setBorder(new MatteBorder(0, 0, 1, 0, Color.black));
+		panel.add(tf, BorderLayout.SOUTH);
+		tf.addAncestorListener(new AncestorListener() {
+			@Override
+			public void ancestorAdded(AncestorEvent event) {
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						tf.requestFocus();
+					}
+				});
+			}
+
+			@Override
+			public void ancestorRemoved(AncestorEvent event) {
+			}
+
+			@Override
+			public void ancestorMoved(AncestorEvent event) {
+			}
+		});
+		JOptionPane.showMessageDialog(null, panel, dialogBoxTitle, JOptionPane.PLAIN_MESSAGE);
+		String toReturn = tf.getText();
+		return toReturn;
 	}
 
 	private static void getStatus() {
