@@ -19,13 +19,11 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.MatteBorder;
@@ -37,10 +35,10 @@ import myUtilities.MyUtilities;
 
 public class UNBLabSearchFrame {
 
-	private JFrame frmUnbLabSearch;
+	static JFrame frmUnbLabSearch;
 	private static final String version = "1.0";
 	private JTextField searchTF;
-	private static JLabel warningLBL;
+	private static JTextArea warningLBL;
 	static MasterProcessor mp;
 	private static JTextArea searchResultsTA;
 	private final static String RIGHT_ARROW = "\u2192";
@@ -51,6 +49,7 @@ public class UNBLabSearchFrame {
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
+			@SuppressWarnings("static-access")
 			public void run() {
 				try {
 					UNBLabSearchFrame window = new UNBLabSearchFrame();
@@ -101,7 +100,10 @@ public class UNBLabSearchFrame {
 		searchResultsTA.setBackground(SystemColor.control);
 		searchResultsTA.setBorder(null);
 
-		warningLBL = new JLabel("");
+		warningLBL = new JTextArea();
+		warningLBL.setEditable(false);
+		warningLBL.setBackground(SystemColor.control);
+		warningLBL.setBorder(null);
 		warningLBL.addMouseListener(new MouseAdapter() {
 			int clickCount = 0;
 
@@ -132,7 +134,6 @@ public class UNBLabSearchFrame {
 					case "modify":
 						AddingComponentFrame acf = new AddingComponentFrame();
 						acf.setVisible(true);
-						acf.setLocationRelativeTo(null);
 						return;
 					default:
 						warning("Do not do this again!", 1);
@@ -141,10 +142,11 @@ public class UNBLabSearchFrame {
 				}
 			}
 		});
-		warningLBL.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		warningLBL.setHorizontalAlignment(SwingConstants.CENTER);
+		warningLBL.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+		warningLBL.setLineWrap(true);
+		warningLBL.setWrapStyleWord(true);
 		warningLBL.setFont(new Font("Consolas", Font.PLAIN, 12));
-		warningLBL.setBounds(10, 332, 303, 33);
+		warningLBL.setBounds(10, 332, 303, 53);
 		frmUnbLabSearch.getContentPane().add(warningLBL);
 
 		JPanel searchPNL = new JPanel();
@@ -195,6 +197,14 @@ public class UNBLabSearchFrame {
 			mp = new MasterProcessor(FileDealer.readFromFile(), FileDealer.readFromLabFile());
 		} catch (IOException e1) {
 			warning("Unable to read from file", 2);
+			getStatus();
+			return;
+		}
+
+		try {
+			FileDealer.init();
+		} catch (IOException e1) {
+			warning("Unable to create files", 2);
 			getStatus();
 			return;
 		}
