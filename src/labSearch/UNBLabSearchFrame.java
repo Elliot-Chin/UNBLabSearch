@@ -113,7 +113,7 @@ public class UNBLabSearchFrame {
 					clickCount = 0;
 					String command = showInputDialogBox("Enter Command", "Enter Command");
 					switch (command) {
-					case "openFile":
+					case "open Lab File":
 						try {
 							Desktop.getDesktop().open(new File(FileDealer.LAB_FILE));
 							return;
@@ -121,6 +121,19 @@ public class UNBLabSearchFrame {
 							warning("something is really wrong (can't find file)", 1);
 							return;
 						}
+					case "open SW File":
+						try {
+							Desktop.getDesktop().open(new File(FileDealer.SW_FILE));
+							return;
+						} catch (IOException e1) {
+							warning("something is really wrong (can't find file)", 1);
+							return;
+						}
+					case "modify":
+						AddingComponentFrame acf = new AddingComponentFrame();
+						acf.setVisible(true);
+						acf.setLocationRelativeTo(null);
+						return;
 					default:
 						warning("Do not do this again!", 1);
 						return;
@@ -200,7 +213,7 @@ public class UNBLabSearchFrame {
 
 		for (Object o : resultList) {
 			if (type.equalsIgnoreCase("Software")) {
-				toDisplay += RIGHT_ARROW + " " + ((Software) o).getName();
+				toDisplay += RIGHT_ARROW + "   " + ((Software) o).getName() + System.lineSeparator();
 			} else if (type.equalsIgnoreCase("Lab")) {
 				toDisplay += RIGHT_ARROW + " " + ((Lab) o).getName();
 			}
