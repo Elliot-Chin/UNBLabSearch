@@ -110,6 +110,7 @@ public class AddingComponentFrame extends JFrame {
 				try {
 					UNBLabSearchFrame.mp.add(newLabName, "Lab");
 				} catch (IOException e1) {
+					UNBLabSearchFrame.warning("Error writing lab to file", 2);
 					return;
 				}
 			}
@@ -131,7 +132,7 @@ public class AddingComponentFrame extends JFrame {
 		try {
 			fillLabListContentPNL(FileDealer.readFromLabFile());
 		} catch (IOException e) {
-			UNBLabSearchFrame.warning("Error reading from lab file", 1);
+			UNBLabSearchFrame.warning("Error reading from lab file", 2);
 			return;
 		}
 	}
