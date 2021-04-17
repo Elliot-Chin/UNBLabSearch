@@ -32,6 +32,7 @@ import myUtilities.MyUtilities;
 
 public class AddingComponentFrame extends JFrame {
 
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField newSWTF;
 	private JPanel labListContentPNL;
@@ -106,7 +107,11 @@ public class AddingComponentFrame extends JFrame {
 				String newLabName = showInputDialogBox("New Lab Name", "New Lab");
 				if (MyUtilities.isEmpty(newLabName))
 					return;
-				
+				try {
+					UNBLabSearchFrame.mp.add(newLabName, "Lab");
+				} catch (IOException e1) {
+					return;
+				}
 			}
 		});
 		addLabBTN.setFont(new Font("Consolas", Font.PLAIN, 12));
