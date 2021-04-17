@@ -3,8 +3,6 @@ package labSearch;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.SystemColor;
@@ -41,34 +39,18 @@ public class AddingComponentFrame extends JFrame {
 	private List<JCheckBox> checkBoxList;
 
 	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					AddingComponentFrame frame = new AddingComponentFrame();
-					frame.setVisible(true);
-					frame.setLocationRelativeTo(null);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
 	 * Create the frame.
 	 */
 	public AddingComponentFrame() {
 
 		setTitle("Add New Software | Lab");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(100, 100, 351, 462);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+		setResizable(false);
 
 		JPanel newSWPNL = new JPanel();
 		newSWPNL.setBorder(new TitledBorder(
@@ -100,7 +82,7 @@ public class AddingComponentFrame extends JFrame {
 		labListSP.setBounds(10, 22, 301, 258);
 		labListSP.setAutoscrolls(true);
 		labListPNL.add(labListSP);
-		labListSP.getVerticalScrollBar().setUnitIncrement(UNBLabSearchFrame.mp.getSize("Lab") / 10);
+		labListSP.getVerticalScrollBar().setUnitIncrement((int) Math.ceil(UNBLabSearchFrame.mp.getSize("Lab") / 7));
 
 		labListContentPNL = new JPanel();
 		labListContentPNL.setFont(new Font("Consolas", Font.PLAIN, 12));
@@ -115,7 +97,13 @@ public class AddingComponentFrame extends JFrame {
 				if (MyUtilities.isEmpty(newLabName))
 					return;
 				try {
-					UNBLabSearchFrame.mp.add(newLabName, "Lab");
+					UNBLabSearchFrame.mp.add(new Lab(newLabName));
+					dispose();
+					AddingComponentFrame tempNewFrame = new AddingComponentFrame();
+					tempNewFrame.setVisible(true);
+					setLocation(UNBLabSearchFrame.frmUnbLabSearch.getX() + UNBLabSearchFrame.frmUnbLabSearch.getY(),
+							UNBLabSearchFrame.frmUnbLabSearch.getY());
+
 				} catch (IOException e1) {
 					UNBLabSearchFrame.warning("Error writing lab to file", 2);
 					return;
@@ -133,6 +121,46 @@ public class AddingComponentFrame extends JFrame {
 		contentPane.add(btnDeleteLab);
 
 		JButton btnDone = new JButton("Done");
+		btnDone.addActionListener(new ActionListener() {
+			List<Integer> indexList = new ArrayList<>();
+			List<Lab> addToLabList = new ArrayList<>(); // this arrayList takes the list of new labs to add software to
+
+			public void actionPerformed(ActionEvent e) {
+				for (int i = 0; i < checkBoxList.size(); i++) { // loop to get all the index of checked boxes
+					if (checkBoxList.get(i).isSelected()) {
+						indexList.add(i);
+					}
+				}
+
+				if (indexList.size() > 0) { // means there is at least 1 lab selected
+					if (MyUtilities.isEmpty(newSWTF)) {
+						UNBLabSearchFrame.warning("Please enter new software name before adding to lab", 1);
+						return;
+					}
+				} else if (indexList.size() == 0) { // if no labs are selected
+					UNBLabSearchFrame.warning("Please select at least 1 lab to be added to", 1);
+					return;
+				}
+
+				for (int i = 0; i < indexList.size(); i++) { // this creates all the labs objects
+					addToLabList.add(new Lab(UNBLabSearchFrame.mp.getLabList().get(indexList.get(i)).getName()));
+				}
+
+				Software s = new Software(newSWTF.getText());
+				for (Lab l : addToLabList) { // add the selected labs to the sw
+					s.addLab(l);
+				}
+
+				try {
+					UNBLabSearchFrame.mp.add(s);
+				} catch (IOException e1) {
+					UNBLabSearchFrame.warning("Unable to add software to file", 2);
+					return;
+				}
+				dispose();
+				return;
+			}
+		});
 		btnDone.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnDone.setFont(new Font("Consolas", Font.PLAIN, 12));
 		btnDone.setBounds(236, 385, 89, 23);
@@ -144,6 +172,9 @@ public class AddingComponentFrame extends JFrame {
 			UNBLabSearchFrame.warning("Error reading from lab file", 2);
 			return;
 		}
+
+		setLocation(UNBLabSearchFrame.frmUnbLabSearch.getX() + UNBLabSearchFrame.frmUnbLabSearch.getY(),
+				UNBLabSearchFrame.frmUnbLabSearch.getY());
 	}
 
 	private void fillLabListContentPNL(List<Lab> labList) {
@@ -156,8 +187,6 @@ public class AddingComponentFrame extends JFrame {
 			JCheckBox tempCB = new JCheckBox();
 			checkBoxList.add(tempCB);
 			labListContentPNL.add(tempCB);
-			// note to self: use the index of the checked checkboxes from the checkbox list
-			// to find the lab names, cuz the checkbox index = the labnames in lablist
 		}
 	}
 
