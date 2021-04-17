@@ -217,6 +217,10 @@ public class UNBLabSearchFrame {
 		case 1:
 			warningLBL.setForeground(Color.RED);
 			break;
+		case 2:
+			warningLBL.setForeground(Color.ORANGE);
+			warningText = "Contact Elliot: " + warningText;
+			break;
 		}
 		warningLBL.setText(warningText);
 		new Thread(() -> { // create new thread that has a 3 second delay
