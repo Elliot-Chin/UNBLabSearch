@@ -181,7 +181,8 @@ public class UNBLabSearchFrame {
 		try {
 			mp = new MasterProcessor(FileDealer.readFromFile(), FileDealer.readFromLabFile());
 		} catch (IOException e1) {
-			warning("Unable to read from file", 1);
+			warning("Unable to read from file", 2);
+			getStatus();
 			return;
 		}
 
@@ -225,7 +226,10 @@ public class UNBLabSearchFrame {
 		warningLBL.setText(warningText);
 		new Thread(() -> { // create new thread that has a 3 second delay
 			try {
-				Thread.sleep(3000);
+				if (i == 2)
+					Thread.sleep(5000);
+				else
+					Thread.sleep(3000);
 			} catch (InterruptedException ex) {
 			}
 			warningLBL.setText("");
