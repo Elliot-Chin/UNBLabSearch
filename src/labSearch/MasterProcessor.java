@@ -80,11 +80,20 @@ public class MasterProcessor {
 		int swListSize = swList.size();
 		if (type.equalsIgnoreCase("Lab")) {
 			for (Lab l : labList) {
-				if (l.getName().equalsIgnoreCase(itemName)) {
+				if (l.getName().equalsIgnoreCase(itemName)) { // remove lab from labList
 					labList.remove(l);
 					return;
 				}
 			}
+
+			for (Software s : swList) {
+				for (Lab l : s.getLabList()) {
+					if (l.getName().equalsIgnoreCase(itemName)) {
+						s.removeLab(l);
+					}
+				}
+			}
+
 			if (labList.size() == labListSize) // check if thre is a change in the size, else just stop
 				return;
 			FileDealer.writeToLabFile(labList);
