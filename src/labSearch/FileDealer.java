@@ -11,8 +11,8 @@ import java.util.List;
 
 public class FileDealer {
 
-	private static final String LAB_FILE = "testFile.txt";
-	private static final String SW_FILE = "";
+	static final String LAB_FILE = "testFile.txt";
+	static final String SW_FILE = "";
 
 	public static void writeToFile(List<Software> swList) throws IOException {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(SW_FILE)));
@@ -45,5 +45,16 @@ public class FileDealer {
 			bw.write(l.toFileFormat());
 		}
 		bw.close();
+	}
+
+	public static List<Lab> readFromLabFile() throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader(new File(LAB_FILE)));
+		List<Lab> toReturn = new ArrayList<>();
+		String line;
+		while ((line = br.readLine()) != null) {
+			toReturn.add(new Lab(line));
+		}
+		br.close();
+		return toReturn;
 	}
 }
