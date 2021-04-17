@@ -15,4 +15,8 @@ public class Lab {
 	public String getName() {
 		return labName;
 	}
+
+	public String toFileFormat() {
+		return labName + System.lineSeparator();
+	}
 }

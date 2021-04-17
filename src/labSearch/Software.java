@@ -29,12 +29,8 @@ public class Software {
 		return labList;
 	}
 
-	public void removeLab(String labName) {
-		for (Lab l : labList)
-			if (labName.equalsIgnoreCase(l.getName())) {
-				labList.remove(l);
-				return;
-			}
+	public void removeLab(Lab lab) {
+		labList.remove(lab);
 	}
 
 	public String toFileFormat() {

@@ -11,10 +11,11 @@ import java.util.List;
 
 public class FileDealer {
 
-	private static final String LAB_FILE = "testFile.txt";
+	static final String LAB_FILE = "labList.txt";
+	static final String SW_FILE = "softwareList.txt";
 
 	public static void writeToFile(List<Software> swList) throws IOException {
-		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(LAB_FILE)));
+		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(SW_FILE)));
 		for (Software s : swList) {
 			bw.write(s.toFileFormat());
 		}
@@ -22,7 +23,7 @@ public class FileDealer {
 	}
 
 	public static List<Software> readFromFile() throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader(new File(LAB_FILE)));
+		BufferedReader br = new BufferedReader(new FileReader(new File(SW_FILE)));
 		List<Software> toReturn = new ArrayList<>();
 		String line, temp[];
 		int index = 0;
@@ -36,5 +37,33 @@ public class FileDealer {
 		}
 		br.close();
 		return toReturn;
+	}
+
+	public static void writeToLabFile(List<Lab> labList) throws IOException {
+		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(LAB_FILE)));
+		for (Lab l : labList) {
+			bw.write(l.toFileFormat());
+		}
+		bw.close();
+	}
+
+	public static List<Lab> readFromLabFile() throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader(new File(LAB_FILE)));
+		List<Lab> toReturn = new ArrayList<>();
+		String line;
+		while ((line = br.readLine()) != null) {
+			toReturn.add(new Lab(line));
+		}
+		br.close();
+		return toReturn;
+	}
+
+	public static void init() throws IOException {
+		if (!new File(LAB_FILE).exists()) {
+			new File(LAB_FILE).createNewFile();
+		}
+		if (!new File(SW_FILE).exists()) {
+			new File(SW_FILE).createNewFile();
+		}
 	}
 }

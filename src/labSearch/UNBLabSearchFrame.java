@@ -1,39 +1,45 @@
 package labSearch;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JTextArea;
-import javax.swing.JLabel;
-import java.awt.Font;
-import javax.swing.SwingConstants;
-import java.awt.Cursor;
-import javax.swing.JPanel;
-import javax.swing.border.TitledBorder;
-
-import myUtilities.MyUtilities;
-
-import javax.swing.border.EtchedBorder;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Desktop;
+import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.SystemColor;
-import javax.swing.JTextField;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.awt.event.ActionEvent;
-import javax.swing.JScrollPane;
+
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.MatteBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
+
+import myUtilities.MyUtilities;
 
 public class UNBLabSearchFrame {
 
-	private JFrame frmUnbLabSearch;
+	static JFrame frmUnbLabSearch;
 	private static final String version = "1.0";
 	private JTextField searchTF;
-	private static JLabel warningLBL;
-	private static SoftwareProcessor sp;
+	private static JTextArea warningLBL;
+	static MasterProcessor mp;
 	private static JTextArea searchResultsTA;
 	private final static String RIGHT_ARROW = "\u2192";
 	private JScrollPane searchResultsSP;
@@ -43,6 +49,7 @@ public class UNBLabSearchFrame {
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
+			@SuppressWarnings("static-access")
 			public void run() {
 				try {
 					UNBLabSearchFrame window = new UNBLabSearchFrame();
@@ -93,11 +100,53 @@ public class UNBLabSearchFrame {
 		searchResultsTA.setBackground(SystemColor.control);
 		searchResultsTA.setBorder(null);
 
-		warningLBL = new JLabel("");
-		warningLBL.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		warningLBL.setHorizontalAlignment(SwingConstants.CENTER);
+		warningLBL = new JTextArea();
+		warningLBL.setEditable(false);
+		warningLBL.setBackground(SystemColor.control);
+		warningLBL.setBorder(null);
+		warningLBL.addMouseListener(new MouseAdapter() {
+			int clickCount = 0;
+
+			public void mouseClicked(MouseEvent e) {
+				if (e.getButton() == MouseEvent.BUTTON3) {
+					clickCount++;
+				}
+				if (clickCount == 3) {
+					clickCount = 0;
+					String command = showInputDialogBox("Enter Command", "Enter Command");
+					switch (command) {
+					case "open Lab File":
+						try {
+							Desktop.getDesktop().open(new File(FileDealer.LAB_FILE));
+							return;
+						} catch (IOException e1) {
+							warning("something is really wrong (can't find file)", 1);
+							return;
+						}
+					case "open SW File":
+						try {
+							Desktop.getDesktop().open(new File(FileDealer.SW_FILE));
+							return;
+						} catch (IOException e1) {
+							warning("something is really wrong (can't find file)", 1);
+							return;
+						}
+					case "modify":
+						AddingComponentFrame acf = new AddingComponentFrame();
+						acf.setVisible(true);
+						return;
+					default:
+						warning("Do not do this again!", 1);
+						return;
+					}
+				}
+			}
+		});
+		warningLBL.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+		warningLBL.setLineWrap(true);
+		warningLBL.setWrapStyleWord(true);
 		warningLBL.setFont(new Font("Consolas", Font.PLAIN, 12));
-		warningLBL.setBounds(10, 332, 303, 33);
+		warningLBL.setBounds(10, 332, 303, 53);
 		frmUnbLabSearch.getContentPane().add(warningLBL);
 
 		JPanel searchPNL = new JPanel();
@@ -112,7 +161,7 @@ public class UNBLabSearchFrame {
 		searchTF.setFont(new Font("Consolas", Font.PLAIN, 12));
 		searchTF.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				List<?> searchResults = sp.search(searchTF.getText());
+				List<?> searchResults = mp.search(searchTF.getText());
 				String listType = null;
 				try {
 					listType = searchResults.get(0).getClass().getSimpleName();
@@ -131,6 +180,7 @@ public class UNBLabSearchFrame {
 		searchTF.setColumns(10);
 
 		JButton btnNewButton = new JButton("Clear");
+		btnNewButton.setToolTipText("Clear search bar and search results");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				searchTF.setText("");
@@ -144,9 +194,18 @@ public class UNBLabSearchFrame {
 
 //Initial run starts here, setup of frame above
 		try {
-			sp = new SoftwareProcessor(FileDealer.readFromFile());
+			mp = new MasterProcessor(FileDealer.readFromFile(), FileDealer.readFromLabFile());
 		} catch (IOException e1) {
-			warning("Unable to read from file", 1);
+			warning("Unable to read from file", 2);
+			getStatus();
+			return;
+		}
+
+		try {
+			FileDealer.init();
+		} catch (IOException e1) {
+			warning("Unable to create files", 2);
+			getStatus();
 			return;
 		}
 
@@ -164,7 +223,7 @@ public class UNBLabSearchFrame {
 
 		for (Object o : resultList) {
 			if (type.equalsIgnoreCase("Software")) {
-				toDisplay += RIGHT_ARROW + " " + ((Software) o).getName();
+				toDisplay += RIGHT_ARROW + "   " + ((Software) o).getName() + System.lineSeparator();
 			} else if (type.equalsIgnoreCase("Lab")) {
 				toDisplay += RIGHT_ARROW + " " + ((Lab) o).getName();
 			}
@@ -182,15 +241,57 @@ public class UNBLabSearchFrame {
 		case 1:
 			warningLBL.setForeground(Color.RED);
 			break;
+		case 2:
+			warningLBL.setForeground(Color.ORANGE);
+			warningText = "Contact Elliot: " + warningText;
+			break;
 		}
 		warningLBL.setText(warningText);
 		new Thread(() -> { // create new thread that has a 3 second delay
 			try {
-				Thread.sleep(3000);
+				if (i == 2)
+					Thread.sleep(5000);
+				else
+					Thread.sleep(3000);
 			} catch (InterruptedException ex) {
 			}
 			warningLBL.setText("");
 		}).start();
+	}
+
+	public static String showInputDialogBox(String borderTitle, String dialogBoxTitle) {
+		JPanel panel = new JPanel();
+		panel.setLayout(new BorderLayout());
+		panel.setBorder(new TitledBorder(
+				new EtchedBorder(EtchedBorder.LOWERED, new Color(153, 180, 209), new Color(244, 247, 252)), borderTitle,
+				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		JTextField tf = new JTextField();
+		tf.setBackground(SystemColor.control);
+		tf.setFont(new Font("Consolas", Font.PLAIN, 12));
+		tf.setBorder(new MatteBorder(0, 0, 1, 0, Color.black));
+		panel.add(tf, BorderLayout.SOUTH);
+		tf.addAncestorListener(new AncestorListener() {
+			@Override
+			public void ancestorAdded(AncestorEvent event) {
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						tf.requestFocus();
+					}
+				});
+			}
+
+			@Override
+			public void ancestorRemoved(AncestorEvent event) {
+			}
+
+			@Override
+			public void ancestorMoved(AncestorEvent event) {
+			}
+		});
+		JOptionPane.showMessageDialog(null, panel, dialogBoxTitle, JOptionPane.PLAIN_MESSAGE);
+		String toReturn = tf.getText();
+		return toReturn;
 	}
 
 	private static void getStatus() {
