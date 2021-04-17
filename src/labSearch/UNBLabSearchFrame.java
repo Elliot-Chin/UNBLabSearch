@@ -118,7 +118,7 @@ public class UNBLabSearchFrame {
 							Desktop.getDesktop().open(new File(FileDealer.LAB_FILE));
 							return;
 						} catch (IOException e1) {
-							warning("You should not be seeing this message, something is really wrong (can't find file)",
+							warning("something is really wrong (can't find file)",
 									1);
 							return;
 						}
