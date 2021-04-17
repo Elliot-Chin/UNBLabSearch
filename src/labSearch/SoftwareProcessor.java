@@ -46,10 +46,12 @@ public class SoftwareProcessor {
 		return searchResults;
 	}
 
-	public Set<String> getLabList() {
+	public Set<String> getLabListFrmSW() {
 		Set<String> toReturn = new HashSet<>();
-		for (Software sw : swList) {
-			toReturn.add(sw.getName());
+		for (Software s : swList) {
+			for (Lab l : s.getLabList()) {
+				toReturn.add(l.getName());
+			}
 		}
 		return toReturn;
 	}
