@@ -259,7 +259,7 @@ public class UNBLabSearchFrame {
 		}).start();
 	}
 
-	private String showInputDialogBox(String borderTitle, String dialogBoxTitle) {
+	public static String showInputDialogBox(String borderTitle, String dialogBoxTitle) {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
 		panel.setBorder(new TitledBorder(
