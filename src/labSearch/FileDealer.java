@@ -11,8 +11,8 @@ import java.util.List;
 
 public class FileDealer {
 
-	static final String LAB_FILE = "testFile.txt";
-	static final String SW_FILE = "";
+	static final String LAB_FILE = "labList.txt";
+	static final String SW_FILE = "softwareList.txt";
 
 	public static void writeToFile(List<Software> swList) throws IOException {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(SW_FILE)));
