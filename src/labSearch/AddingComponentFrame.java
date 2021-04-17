@@ -2,6 +2,8 @@ package labSearch;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -85,23 +87,28 @@ public class AddingComponentFrame extends JFrame {
 		newSWTF.setColumns(10);
 
 		JPanel labListPNL = new JPanel();
-		labListPNL
-				.setBorder(new TitledBorder(null, "JPanel title", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		labListPNL.setBorder(new TitledBorder(
+				new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "Lab List",
+				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		labListPNL.setBounds(4, 83, 321, 291);
 		contentPane.add(labListPNL);
 		labListPNL.setLayout(null);
 
 		JScrollPane labListSP = new JScrollPane();
+		labListSP.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		labListSP.setBorder(null);
-		labListSP.setBounds(10, 16, 301, 264);
+		labListSP.setBounds(10, 22, 301, 258);
+		labListSP.setAutoscrolls(true);
 		labListPNL.add(labListSP);
+		labListSP.getVerticalScrollBar().setUnitIncrement(UNBLabSearchFrame.mp.getSize("Lab") / 10);
 
 		labListContentPNL = new JPanel();
-		labListContentPNL.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		labListContentPNL.setFont(new Font("Consolas", Font.PLAIN, 12));
 		labListSP.setViewportView(labListContentPNL);
 		labListContentPNL.setLayout(new GridLayout(0, 2, 0, 8));
 
 		JButton addLabBTN = new JButton("Add Lab");
+		addLabBTN.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		addLabBTN.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String newLabName = showInputDialogBox("New Lab Name", "New Lab");
@@ -120,11 +127,13 @@ public class AddingComponentFrame extends JFrame {
 		contentPane.add(addLabBTN);
 
 		JButton btnDeleteLab = new JButton("Delete");
+		btnDeleteLab.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnDeleteLab.setFont(new Font("Consolas", Font.PLAIN, 12));
 		btnDeleteLab.setBounds(114, 385, 89, 23);
 		contentPane.add(btnDeleteLab);
 
 		JButton btnDone = new JButton("Done");
+		btnDone.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnDone.setFont(new Font("Consolas", Font.PLAIN, 12));
 		btnDone.setBounds(236, 385, 89, 23);
 		contentPane.add(btnDone);
