@@ -63,13 +63,21 @@ public class MasterProcessor {
 		return toReturn;
 	}
 
-	public void add(String itemName, String type) throws IOException {
-		if (type.equalsIgnoreCase("Lab")) {
-			labList.add(new Lab(itemName));
+	public List<Software> getSWList() {
+		return swList;
+	}
+
+	public List<Lab> getLabList() {
+		return labList;
+	}
+
+	public void add(Object type) throws IOException {
+		if (type instanceof Lab) {
+			labList.add((Lab) type);
 			FileDealer.writeToLabFile(labList);
 			return;
-		} else {
-			swList.add(new Software(itemName));
+		} else if (type instanceof Software) {
+			swList.add((Software) type);
 			FileDealer.writeToFile(swList);
 			return;
 		}
