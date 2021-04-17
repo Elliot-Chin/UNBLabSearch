@@ -90,7 +90,7 @@ public class MasterProcessor {
 			for (Lab l : labList) {
 				if (l.getName().equalsIgnoreCase(itemName)) { // remove lab from labList
 					labList.remove(l);
-					return;
+					break;
 				}
 			}
 
@@ -98,6 +98,7 @@ public class MasterProcessor {
 				for (Lab l : s.getLabList()) {
 					if (l.getName().equalsIgnoreCase(itemName)) {
 						s.removeLab(l);
+						break;
 					}
 				}
 			}
@@ -110,7 +111,7 @@ public class MasterProcessor {
 			for (Software s : swList) {
 				if (s.getName().equalsIgnoreCase(itemName)) {
 					swList.remove(s);
-					return;
+					break;
 				}
 			}
 			if (swList.size() == swListSize) // check if thre is a change in the size, else just stop
