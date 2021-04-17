@@ -1,7 +1,9 @@
 package labSearch;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SoftwareProcessor {
 
@@ -42,5 +44,13 @@ public class SoftwareProcessor {
 			}
 		}
 		return searchResults;
+	}
+
+	public Set<String> getLabList() {
+		Set<String> toReturn = new HashSet<>();
+		for (Software sw : swList) {
+			toReturn.add(sw.getName());
+		}
+		return toReturn;
 	}
 }
