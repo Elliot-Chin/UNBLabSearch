@@ -57,4 +57,13 @@ public class FileDealer {
 		br.close();
 		return toReturn;
 	}
+
+	public static void init() throws IOException {
+		if (!new File(LAB_FILE).exists()) {
+			new File(LAB_FILE).createNewFile();
+		}
+		if (!new File(SW_FILE).exists()) {
+			new File(SW_FILE).createNewFile();
+		}
+	}
 }
