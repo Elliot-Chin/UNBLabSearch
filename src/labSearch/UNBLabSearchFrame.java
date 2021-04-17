@@ -41,7 +41,7 @@ public class UNBLabSearchFrame {
 	private static final String version = "1.0";
 	private JTextField searchTF;
 	private static JLabel warningLBL;
-	private static SoftwareProcessor sp;
+	static MasterProcessor mp;
 	private static JTextArea searchResultsTA;
 	private final static String RIGHT_ARROW = "\u2192";
 	private JScrollPane searchResultsSP;
@@ -118,8 +118,7 @@ public class UNBLabSearchFrame {
 							Desktop.getDesktop().open(new File(FileDealer.LAB_FILE));
 							return;
 						} catch (IOException e1) {
-							warning("something is really wrong (can't find file)",
-									1);
+							warning("something is really wrong (can't find file)", 1);
 							return;
 						}
 					default:
@@ -147,7 +146,7 @@ public class UNBLabSearchFrame {
 		searchTF.setFont(new Font("Consolas", Font.PLAIN, 12));
 		searchTF.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				List<?> searchResults = sp.search(searchTF.getText());
+				List<?> searchResults = mp.search(searchTF.getText());
 				String listType = null;
 				try {
 					listType = searchResults.get(0).getClass().getSimpleName();
@@ -180,7 +179,7 @@ public class UNBLabSearchFrame {
 
 //Initial run starts here, setup of frame above
 		try {
-			sp = new SoftwareProcessor(FileDealer.readFromFile());
+			mp = new MasterProcessor(FileDealer.readFromFile(), FileDealer.readFromLabFile());
 		} catch (IOException e1) {
 			warning("Unable to read from file", 1);
 			return;
