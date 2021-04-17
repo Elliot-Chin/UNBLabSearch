@@ -115,6 +115,40 @@ public class AddingComponentFrame extends JFrame {
 		contentPane.add(addLabBTN);
 
 		JButton btnDeleteLab = new JButton("Delete");
+		btnDeleteLab.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String toDelete = UNBLabSearchFrame.showInputDialogBox("Enter [SW | LB] [NAME] to delete", "Delete");
+				if (MyUtilities.isEmpty(toDelete))
+					return;
+				String temp[] = toDelete.split("\\s+", 2);
+				if (temp.length != 2) {
+					UNBLabSearchFrame
+							.warning("Please enter [SW] (software) or [LB] Lab followed by the [NAME] to delete", 1);
+					return;
+				}
+				String option = null;
+				if (temp[0].equals("SW"))
+					option = "Software";
+				else if (temp[0].equals("LB"))
+					option = "Lab";
+				else {
+					UNBLabSearchFrame
+							.warning("Please enter [SW] (software) or [LB] Lab followed by the [NAME] to delete", 1);
+					return;
+				}
+				try {
+					UNBLabSearchFrame.mp.remove(temp[1], option);
+					dispose();
+					AddingComponentFrame tempNewFrame = new AddingComponentFrame();
+					tempNewFrame.setVisible(true);
+					setLocation(UNBLabSearchFrame.frmUnbLabSearch.getX() + UNBLabSearchFrame.frmUnbLabSearch.getY(),
+							UNBLabSearchFrame.frmUnbLabSearch.getY());
+				} catch (IOException e1) {
+					UNBLabSearchFrame.warning("Unable to write to file", 3);
+					return;
+				}
+			}
+		});
 		btnDeleteLab.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnDeleteLab.setFont(new Font("Consolas", Font.PLAIN, 12));
 		btnDeleteLab.setBounds(114, 385, 89, 23);
