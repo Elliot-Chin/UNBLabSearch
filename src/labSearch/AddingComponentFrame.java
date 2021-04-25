@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -51,6 +52,7 @@ public class AddingComponentFrame extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		setResizable(false);
+		setIconImage(new ImageIcon("Image/Icon.png").getImage());
 
 		JPanel newSWPNL = new JPanel();
 		newSWPNL.setBorder(new TitledBorder(
