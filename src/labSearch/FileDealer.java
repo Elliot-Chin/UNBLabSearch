@@ -11,9 +11,18 @@ import java.util.List;
 
 public class FileDealer {
 
+	/**
+	 * The file names
+	 */
 	static final String LAB_FILE = "labList.txt";
 	static final String SW_FILE = "softwareList.txt";
 
+	/**
+	 * writes the software list to the file
+	 * 
+	 * @param swList - the list of software to write to the file
+	 * @throws IOException
+	 */
 	public static void writeToFile(List<Software> swList) throws IOException {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(SW_FILE)));
 		for (Software s : swList) {
@@ -22,6 +31,12 @@ public class FileDealer {
 		bw.close();
 	}
 
+	/**
+	 * reads the list of software from the file
+	 * 
+	 * @return a list of software
+	 * @throws IOException
+	 */
 	public static List<Software> readFromFile() throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader(new File(SW_FILE)));
 		List<Software> toReturn = new ArrayList<>();
@@ -39,6 +54,12 @@ public class FileDealer {
 		return toReturn;
 	}
 
+	/**
+	 * writes the list of labs to the file
+	 * 
+	 * @param labList - list of labs to write to the file
+	 * @throws IOException
+	 */
 	public static void writeToLabFile(List<Lab> labList) throws IOException {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(LAB_FILE)));
 		for (Lab l : labList) {
@@ -47,6 +68,12 @@ public class FileDealer {
 		bw.close();
 	}
 
+	/**
+	 * reads the list of labs from the file
+	 * 
+	 * @return a list of labs
+	 * @throws IOException
+	 */
 	public static List<Lab> readFromLabFile() throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader(new File(LAB_FILE)));
 		List<Lab> toReturn = new ArrayList<>();
@@ -58,6 +85,11 @@ public class FileDealer {
 		return toReturn;
 	}
 
+	/**
+	 * checks if files exist, if they dont create them
+	 * 
+	 * @throws IOException
+	 */
 	public static void init() throws IOException {
 		if (!new File(LAB_FILE).exists()) {
 			new File(LAB_FILE).createNewFile();
