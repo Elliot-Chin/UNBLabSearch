@@ -209,10 +209,16 @@ public class AddingComponentFrame extends JFrame {
 			return;
 		}
 
+		// spawns this frame to the right of the original frame
 		setLocation(UNBLabSearchFrame.frmUnbLabSearch.getX() + UNBLabSearchFrame.frmUnbLabSearch.getY(),
 				UNBLabSearchFrame.frmUnbLabSearch.getY());
 	}
 
+	/**
+	 * displays all the labs (including labs without any software)
+	 * 
+	 * @param labList - the list of labs
+	 */
 	private void fillLabListContentPNL(List<Lab> labList) {
 		checkBoxList = new ArrayList<>();
 		for (Lab l : labList) {
@@ -226,6 +232,13 @@ public class AddingComponentFrame extends JFrame {
 		}
 	}
 
+	/**
+	 * displays a dialog box that returns a String
+	 * 
+	 * @param borderTitle    - the title for the border of the component
+	 * @param dialogBoxTitle - the title for the dialog box
+	 * @return the string entered by the user in the dialog box
+	 */
 	private String showInputDialogBox(String borderTitle, String dialogBoxTitle) {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
