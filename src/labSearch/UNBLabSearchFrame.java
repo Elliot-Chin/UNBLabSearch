@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -35,11 +36,18 @@ import myUtilities.MyUtilities;
 
 public class UNBLabSearchFrame {
 
+	/**
+	 * Not private as its used in AddingComponentFrame
+	 */
 	static JFrame frmUnbLabSearch;
+	static MasterProcessor mp;
+
+	/**
+	 * Declaring variables
+	 */
 	private static final String version = "1.0";
 	private JTextField searchTF;
 	private static JTextArea warningLBL;
-	static MasterProcessor mp;
 	private static JTextArea searchResultsTA;
 	private final static String RIGHT_ARROW = "\u2192";
 	private JScrollPane searchResultsSP;
@@ -74,12 +82,12 @@ public class UNBLabSearchFrame {
 	 */
 	private void initialize() {
 		frmUnbLabSearch = new JFrame();
-		frmUnbLabSearch.setTitle("UNB Lab Search v" + version);
+		frmUnbLabSearch.setTitle("UNB Lab Finder v" + version);
 		frmUnbLabSearch.setBounds(100, 100, 339, 425);
 		frmUnbLabSearch.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmUnbLabSearch.getContentPane().setLayout(null);
 		frmUnbLabSearch.setResizable(false);
-
+		frmUnbLabSearch.setIconImage(new ImageIcon("Image/Icon.png").getImage());
 		JPanel searchResultsPNL = new JPanel();
 		searchResultsPNL.setBorder(new TitledBorder(
 				new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
@@ -105,16 +113,18 @@ public class UNBLabSearchFrame {
 		warningLBL.setBackground(SystemColor.control);
 		warningLBL.setBorder(null);
 		warningLBL.addMouseListener(new MouseAdapter() {
-			int clickCount = 0;
+
+			int clickCount = 0; // to keep track of number of clicks
 
 			public void mouseClicked(MouseEvent e) {
-				if (e.getButton() == MouseEvent.BUTTON3) {
+				if (e.getButton() == MouseEvent.BUTTON3) { // only count the number of right clicks
 					clickCount++;
 				}
-				if (clickCount == 3) {
-					clickCount = 0;
-					String command = showInputDialogBox("Enter Command", "Enter Command");
-					switch (command) {
+				if (clickCount == 3) { // check if the number of clicks == 3
+					clickCount = 0; // reset the count when its == 3
+					String command = showInputDialogBox("Enter Command", "Enter Command"); // display command box to
+																							// enter command
+					switch (command) { // secret command list
 					case "open Lab File":
 						try {
 							Desktop.getDesktop().open(new File(FileDealer.LAB_FILE));
@@ -135,7 +145,8 @@ public class UNBLabSearchFrame {
 						AddingComponentFrame acf = new AddingComponentFrame();
 						acf.setVisible(true);
 						return;
-					default:
+					default: // warning will be displayed if the command entered does not match any of the
+								// above (case sensitive)
 						warning("Do not do this again!", 1);
 						return;
 					}
@@ -194,24 +205,34 @@ public class UNBLabSearchFrame {
 
 //Initial run starts here, setup of frame above
 		try {
-			mp = new MasterProcessor(FileDealer.readFromFile(), FileDealer.readFromLabFile());
-		} catch (IOException e1) {
-			warning("Unable to read from file", 2);
-			getStatus();
-			return;
-		}
-
-		try {
-			FileDealer.init();
+			FileDealer.init(); // check for existance of files, if not create the files
 		} catch (IOException e1) {
 			warning("Unable to create files", 2);
 			getStatus();
 			return;
 		}
 
-		getStatus();
+		try {
+			mp = new MasterProcessor(FileDealer.readFromFile(), FileDealer.readFromLabFile()); // reading the data from
+																								// files. Files should
+																								// exist at this point.
+		} catch (IOException e1) {
+			warning("Unable to read from file", 2);
+			getStatus(); // show today's date
+			return;
+		}
+
+		getStatus(); // show today's date
 	}
 
+	/**
+	 * displays the list of software / labs found
+	 * 
+	 * @param title      - the entered search query will appear as the title of the
+	 *                   search results
+	 * @param resultList - a list containing all the lab / software found
+	 * @param type       - type of list (Software / Lab)
+	 */
 	private static void displaySearch(String title, List<?> resultList, String type) {
 		String toDisplay = "";
 		if (type.equalsIgnoreCase("Software"))
@@ -233,6 +254,13 @@ public class UNBLabSearchFrame {
 		searchResultsTA.setText(toDisplay);
 	}
 
+	/**
+	 * displays warning text at the bottom of the GUI (in the warning label)
+	 * 
+	 * @param warningText - the text to display in the warning label
+	 * @param i           - the selection for color of text, 1 for red (failed), 2
+	 *                    for blue (pass), 3 for yellow (techincal error)
+	 */
 	public static void warning(String warningText, int i) {
 		switch (i) {
 		case 0:
@@ -259,6 +287,13 @@ public class UNBLabSearchFrame {
 		}).start();
 	}
 
+	/**
+	 * displays a dialog box that returns a string
+	 * 
+	 * @param borderTitle    - the title of the border of the component
+	 * @param dialogBoxTitle - the title of the dialog box
+	 * @return the string entered by the user in the dialog box
+	 */
 	public static String showInputDialogBox(String borderTitle, String dialogBoxTitle) {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
@@ -294,6 +329,9 @@ public class UNBLabSearchFrame {
 		return toReturn;
 	}
 
+	/**
+	 * sets the current date in the search results panel
+	 */
 	private static void getStatus() {
 		String toDisplay = "";
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy");
